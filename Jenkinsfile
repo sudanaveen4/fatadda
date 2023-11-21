@@ -11,8 +11,18 @@ pipeline {
 
         stage('Build') {
             steps {
-                // Build the Maven project
-                sh 'mvn clean install'
+                script {
+                    try {
+                        // Set up environment variables
+                        env.PATH = "${env.JAVA_HOME}/bin:${env.MAVEN_HOME}/bin:${env.PATH}"
+                        
+                        // Maven build with clean and install phases
+                        sh 'mvn clean install'
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        echo "Build failed: ${e.message}"
+                    }
+                }
             }
         }
 
