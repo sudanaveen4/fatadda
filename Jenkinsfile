@@ -1,19 +1,47 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'maven' // Use the name configured in Jenkins Global Tool Configuration
-    }
-
     stages {
-        stage('Build') {
+        stage('Checkout') {
             steps {
-                bat 'mvn clean install'
+
+                git 'https://github.com/sudanaveen4/fatadda.git'
             }
         }
 
-        // Add other stages as needed
+        stage('Build') {
+            steps {
+                // Build the Maven project
+                sh 'mvn clean install'
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                // Build Docker image
+                script {
+                    dockerImage = docker.build("your-docker-image-name")
+                }
+            }
+        }
+
+        stage('Docker Push') {
+            steps {
+                // Push Docker image to a registry
+                script {
+                    docker.withRegistry('https://registry.example.com', 'credentials-id') {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
     }
 
-    // Add post actions and other pipeline configuration
+    post {
+        failure {
+            // Handle errors and print error messages
+            echo 'Pipeline failed!'
+            currentBuild.result = 'FAILURE'
+        }
+    }
 }
