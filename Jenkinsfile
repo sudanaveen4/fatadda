@@ -20,7 +20,7 @@ pipeline {
             steps {
                 // Build Docker image
                 script {
-                    dockerImage = docker.build("your-docker-image-name")
+                    dockerImage = docker.build("suda print")
                 }
             }
         }
@@ -29,7 +29,7 @@ pipeline {
             steps {
                 // Push Docker image to a registry
                 script {
-                    docker.withRegistry('https://registry.example.com', 'credentials-id') {
+                    docker.withRegistry('https://hub.docker.com/repository/docker/sudanaveen4/suda_adda/general', '@20MIC0057s') {
                         dockerImage.push()
                     }
                 }
